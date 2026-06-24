@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -129,13 +130,101 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </header>
 
         <div className="prose prose-neutral max-w-none dark:prose-invert">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              h1: ({ children }) => (
+                <h1
+                  className={`mb-6 mt-10 text-4xl font-bold first:mt-0 ${rtlClassName(children)}`}
+                  dir={textDirection(children)}
+                >
+                  {children}
+                </h1>
+              ),
+              h2: ({ children }) => (
+                <h2
+                  className={`mb-4 mt-8 text-3xl font-semibold first:mt-0 ${rtlClassName(children)}`}
+                  dir={textDirection(children)}
+                >
+                  {children}
+                </h2>
+              ),
+              h3: ({ children }) => (
+                <h3
+                  className={`mb-3 mt-6 text-2xl font-semibold first:mt-0 ${rtlClassName(children)}`}
+                  dir={textDirection(children)}
+                >
+                  {children}
+                </h3>
+              ),
+              h4: ({ children }) => (
+                <h4
+                  className={`mb-2 mt-5 text-xl font-semibold first:mt-0 ${rtlClassName(children)}`}
+                  dir={textDirection(children)}
+                >
+                  {children}
+                </h4>
+              ),
+              p: ({ children }) => (
+                <p
+                  className={`my-4 leading-7 ${rtlClassName(children)}`}
+                  dir={textDirection(children)}
+                >
+                  {children}
+                </p>
+              ),
+              li: ({ children }) => (
+                <li
+                  className={rtlClassName(children)}
+                  dir={textDirection(children)}
+                >
+                  {children}
+                </li>
+              ),
+              blockquote: ({ children }) => (
+                <blockquote
+                  className={`my-6 border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:text-neutral-300 ${
+                    containsArabicText(children)
+                      ? "!border-l-0 !border-r-4 !pl-0 !pr-4 text-right"
+                      : "!border-l-4 !border-r-0 !pl-4 !pr-0"
+                  }`}
+                  dir={textDirection(children)}
+                >
+                  {children}
+                </blockquote>
+              ),
+            }}
+          >
             {note.content}
           </ReactMarkdown>
         </div>
       </article>
     </main>
   );
+}
+
+function containsArabicText(value: ReactNode): boolean {
+  if (typeof value === "string") {
+    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.some(containsArabicText);
+  }
+
+  if (isValidElement<{ children?: ReactNode }>(value)) {
+    return containsArabicText(value.props.children);
+  }
+
+  return false;
+}
+
+function textDirection(value: ReactNode) {
+  return containsArabicText(value) ? "rtl" : undefined;
+}
+
+function rtlClassName(value: ReactNode) {
+  return containsArabicText(value) ? "text-right" : "";
 }
 
 function Breadcrumbs({ slug }: { slug: string[] }) {
