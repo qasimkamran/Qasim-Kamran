@@ -26,3 +26,6 @@ coverage/
 .nyc_output/
 tmp/
 temp/
+
+# Blog directory
+Blog/
