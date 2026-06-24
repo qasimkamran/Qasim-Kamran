@@ -1,0 +1,17 @@
+{
+    "title": "Qasim Kamran",
+    "links": [
+        {
+            "label": "Home",
+            "path": "/index"
+        },
+        {
+            "label": "Blog",
+            "path": "/blog"
+        },
+        {
+            "label": "Contact Me",
+            "path": "/contact"
+        }
+    ]
+}
