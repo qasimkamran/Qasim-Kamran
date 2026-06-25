@@ -4,40 +4,40 @@ import Breadcrumbs from "./Breadcrumbs";
 import MarkdownContent from "./MarkdownContent";
 
 export default function BlogNotePage({
-  note,
-  parentSlug,
+    note,
+    parentSlug,
 }: {
-  note: ParsedNote;
-  parentSlug: string[];
+    note: ParsedNote;
+    parentSlug: string[];
 }) {
-  return (
-    <main className="w-full max-w-3xl px-6 py-12">
-      <Breadcrumbs slug={parentSlug} />
+    return (
+        <main className="w-full max-w-3xl px-6 py-12">
+            <Breadcrumbs slug={parentSlug} />
 
-      <article>
-        <NoteHeader note={note} />
-        <MarkdownContent content={note.content} />
-      </article>
-    </main>
-  );
+            <article>
+                <NoteHeader note={note} />
+                <MarkdownContent content={note.content} />
+            </article>
+        </main>
+    );
 }
 
 function NoteHeader({ note }: { note: ParsedNote }) {
-  return (
-    <header className="mb-10">
-      <h1 className="text-4xl font-bold">{note.title}</h1>
+    return (
+        <header className="mb-10">
+            <h1 className="text-4xl font-bold">{note.title}</h1>
 
-      {note.description && (
-        <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
-          {note.description}
-        </p>
-      )}
+            {note.description && (
+                <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
+                    {note.description}
+                </p>
+            )}
 
-      {note.date && (
-        <time className="mt-4 block text-sm text-neutral-500">
-          {note.date}
-        </time>
-      )}
-    </header>
-  );
+            {note.date && (
+                <time className="mt-4 block text-sm text-neutral-500">
+                    {note.date}
+                </time>
+            )}
+        </header>
+    );
 }
