@@ -16,14 +16,14 @@ export default function RootLayout({
     return (
         <html lang="en" className="h-full antialiased">
             <body className="min-h-full">
-                <div className="min-h-screen md:flex">
-                    <div className="md:hidden">
+                <div className="flex min-h-screen flex-col md:flex-row">
+                    <div className="bg-[#080808] md:hidden">
                         <HorizontalNavbar />
                     </div>
-                    <aside className="hidden shrink-0 basis-1/5 md:block">
+                    <aside className="hidden shrink-0 basis-1/5 bg-[#080808] md:block">
                         <VerticalNavbar />
                     </aside>
-                    <main className="flex-1 px-4 md:basis-4/5 md:px-0 md:pl-[10vw]">
+                    <main className="flex-1 bg-[#12091f] px-4 md:basis-4/5 md:px-0 md:pl-[10vw]">
                         {children}
                     </main>
                 </div>

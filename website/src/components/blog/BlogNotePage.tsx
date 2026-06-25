@@ -1,3 +1,5 @@
+import { type CSSProperties } from "react";
+
 import { type ParsedNote } from "@/lib/blog";
 
 import Breadcrumbs from "./Breadcrumbs";
@@ -11,15 +13,27 @@ export default function BlogNotePage({
     parentSlug: string[];
 }) {
     return (
-        <main className="w-full max-w-3xl px-6 py-12">
-            <Breadcrumbs slug={parentSlug} />
+        <main
+            className="-mx-4 min-h-screen px-10 py-12 md:-ml-[10vw] md:mr-0 md:pl-[calc(10vw+1.5rem)] md:pr-6"
+            style={getNoteStyles(note)}
+        >
+            <div className="w-full max-w-3xl">
+                <Breadcrumbs slug={parentSlug} />
 
-            <article>
-                <NoteHeader note={note} />
-                <MarkdownContent content={note.content} />
-            </article>
+                <article>
+                    <NoteHeader note={note} />
+                    <MarkdownContent content={note.content} />
+                </article>
+            </div>
         </main>
     );
+}
+
+function getNoteStyles(note: ParsedNote): CSSProperties {
+    return {
+        backgroundColor: note.background,
+        color: note.foreground,
+    };
 }
 
 function NoteHeader({ note }: { note: ParsedNote }) {
@@ -28,7 +42,7 @@ function NoteHeader({ note }: { note: ParsedNote }) {
             <h1 className="text-4xl font-bold">{note.title}</h1>
 
             {note.date && (
-                <time className="mt-4 block text-sm text-neutral-500">
+                <time className="mt-4 block text-sm opacity-70">
                     {note.date}
                 </time>
             )}

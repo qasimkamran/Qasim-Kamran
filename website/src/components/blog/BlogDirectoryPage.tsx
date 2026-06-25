@@ -62,7 +62,7 @@ function FolderLink({ folder }: { folder: BlogDirectory }) {
     return (
         <Link
             href={`/blog/${folder.slug.join("/")}`}
-            className="rounded-lg border p-4 transition hover:bg-neutral-50 dark:hover:bg-neutral-900"
+            className="block rounded-lg bg-[#2a123f] p-4 text-white transition-colors hover:bg-[#3a1a57]"
         >
             {folder.name}
         </Link>
@@ -89,7 +89,7 @@ function NotesSection({ notes }: { notes: BlogNote[] }) {
 
 function NoteCard({ note }: { note: BlogNote }) {
     return (
-        <article className="rounded-lg border p-5">
+        <article className="rounded-lg bg-[#2a123f] p-5 text-white">
             <Link
                 href={`/blog/${note.slug.join("/")}`}
                 className="text-xl font-semibold hover:underline"
@@ -98,7 +98,7 @@ function NoteCard({ note }: { note: BlogNote }) {
             </Link>
 
             {note.description && (
-                <p className="mt-2 text-neutral-600 dark:text-neutral-400">
+                <p className="mt-2 text-purple-100">
                     {note.description}
                 </p>
             )}
@@ -118,7 +118,7 @@ function TagList({ tags }: { tags: string[] }) {
             {tags.map((tag) => (
                 <span
                     key={tag}
-                    className="rounded-full bg-neutral-100 px-2 py-1 text-xs dark:bg-neutral-800"
+                    className="rounded-full bg-[#3a1a57] px-2 py-1 text-xs text-white"
                 >
                     {tag}
                 </span>

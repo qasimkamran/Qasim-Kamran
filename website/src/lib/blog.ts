@@ -105,6 +105,8 @@ export type DirectoryContents = {
 
 export type ParsedNote = BlogNote & {
     content: string;
+    background?: string;
+    foreground?: string;
 };
 
 export function toSlugSegment(value: string): string {
@@ -219,6 +221,27 @@ function parseTags(value: unknown): string[] {
     return value.map(String);
 }
 
+function parseCssClassProperty(
+    value: unknown,
+    propertyName: "background" | "foreground",
+): string | undefined {
+    if (!Array.isArray(value))
+        return undefined;
+
+    const prefix = `${propertyName}:`;
+
+    const match = value
+        .map(String)
+        .find((entry) => entry.trim().toLowerCase().startsWith(prefix));
+
+    if (!match)
+        return undefined;
+
+    const propertyValue = match.slice(match.indexOf(":") + 1).trim();
+
+    return propertyValue.length > 0 ? propertyValue : undefined;
+}
+
 async function parseNoteMetadata(
     relativePath: string,
     slug: string[],
@@ -315,6 +338,8 @@ export async function getNote( slug: string[], ): Promise<ParsedNote | null> {
         description: parseOptionalString(parsed.data.description),
         date: parseOptionalDate(parsed.data.date),
         tags: parseTags(parsed.data.tags),
+        background: parseCssClassProperty(parsed.data.cssclasses, "background"),
+        foreground: parseCssClassProperty(parsed.data.cssclasses, "foreground"),
         content: parsed.content, };
 }
 
