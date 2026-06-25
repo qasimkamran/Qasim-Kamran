@@ -19,7 +19,7 @@ export default function RootLayout({
           <aside className="basis-1/5 shrink-0">
             <VerticalNavbar />
           </aside>
-          <main className="basis-4/5 flex-1">{children}</main>
+          <main className="basis-4/5 flex-1 pl-[10vw]">{children}</main>
         </div>
       </body>
     </html>

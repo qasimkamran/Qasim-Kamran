@@ -107,7 +107,7 @@ export type ParsedNote = BlogNote & {
     content: string;
 };
 
-export function obsidianDirectoryToSlugSegment(value: string): string {
+export function toSlugSegment(value: string): string {
   return value
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -136,7 +136,7 @@ function resolveDirectoryFromTree(
     for (const requestedSegment of slug) {
         const match = Array.from(currentNode.folders.entries()).find(
             ([folderName]) =>
-            obsidianDirectoryToSlugSegment(folderName) === requestedSegment,
+            toSlugSegment(folderName) === requestedSegment,
         );
 
         if (!match)
@@ -182,7 +182,7 @@ function resolveNoteFromTree(
 
     const filename = resolvedDirectory.node.notes.find(
         (noteFilename) =>
-            obsidianDirectoryToSlugSegment(removeMarkdownExtension(noteFilename)) ===
+            toSlugSegment(removeMarkdownExtension(noteFilename)) ===
             requestedNoteSegment
     );
 
@@ -252,7 +252,7 @@ export async function getDirectoryContents(
             .map((folderName) => ({
                 type: "directory" as const,
                 name: folderName,
-                slug: [...slug, obsidianDirectoryToSlugSegment(folderName)],
+                slug: [...slug, toSlugSegment(folderName)],
             }))
             .sort((a, b) => a.name.localeCompare(b.name));
         
@@ -261,7 +261,7 @@ export async function getDirectoryContents(
         for (const filename of resolvedDirectory.node.notes) {
             const noteName = removeMarkdownExtension(filename);
     
-            const noteSlug = [...slug, obsidianDirectoryToSlugSegment(noteName)];
+            const noteSlug = [...slug, toSlugSegment(noteName)];
             
             const relativePath = path.join( ...resolvedDirectory.realSegments, filename, );
            
@@ -314,7 +314,7 @@ export async function getAllBlogSlugs(): Promise<string[][]> {
 
     async function walk( node: ContentTreeNode, currentSlug: string[], realSegments: string[], ): Promise<void> {
         for (const [folderName, folderNode] of node.folders) {
-            const folderSlug = [ ...currentSlug, obsidianDirectoryToSlugSegment(folderName), ];
+            const folderSlug = [ ...currentSlug, toSlugSegment(folderName), ];
     
             slugs.push(folderSlug);
             
@@ -323,7 +323,7 @@ export async function getAllBlogSlugs(): Promise<string[][]> {
         for (const filename of node.notes) {
             const noteName = removeMarkdownExtension(filename);
 
-            const noteSlug = [ ...currentSlug, obsidianDirectoryToSlugSegment(noteName), ];
+            const noteSlug = [ ...currentSlug, toSlugSegment(noteName), ];
             
             const relativePath = path.join( ...realSegments, filename, );
             
