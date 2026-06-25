@@ -202,6 +202,16 @@ function parseOptionalString(value: unknown): string | undefined {
     return typeof value === "string" ? value : undefined;
 }
 
+function parseOptionalDate(value: unknown): string | undefined {
+    if (typeof value === "string")
+        return value;
+
+    if (value instanceof Date)
+        return value.toISOString().slice(0, 10);
+
+    return undefined;
+}
+
 function parseTags(value: unknown): string[] {
     if (!Array.isArray(value))
         return [];
@@ -230,9 +240,9 @@ async function parseNoteMetadata(
         type: "note",
         name: fallbackName,
         slug,
-        title: typeof parsed.data.title === "string" ? parsed.data.title : fallbackName,
+        title: fallbackName,
         description: parseOptionalString(parsed.data.description),
-        date: parseOptionalString(parsed.data.date),
+        date: parseOptionalDate(parsed.data.date),
         tags: parseTags(parsed.data.tags),
     };
 }
@@ -301,9 +311,9 @@ export async function getNote( slug: string[], ): Promise<ParsedNote | null> {
         type: "note",
         name: fallbackName,
         slug,
-        title: typeof parsed.data.title === "string" ? parsed.data.title : fallbackName,
+        title: fallbackName,
         description: parseOptionalString(parsed.data.description),
-        date: parseOptionalString(parsed.data.date),
+        date: parseOptionalDate(parsed.data.date),
         tags: parseTags(parsed.data.tags),
         content: parsed.content, };
 }

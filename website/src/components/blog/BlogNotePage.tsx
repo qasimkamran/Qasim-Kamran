@@ -27,12 +27,6 @@ function NoteHeader({ note }: { note: ParsedNote }) {
         <header className="mb-10">
             <h1 className="text-4xl font-bold">{note.title}</h1>
 
-            {note.description && (
-                <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
-                    {note.description}
-                </p>
-            )}
-
             {note.date && (
                 <time className="mt-4 block text-sm text-neutral-500">
                     {note.date}
