@@ -99,13 +99,17 @@ function NotesSection({ notes }: { notes: BlogNote[] }) {
 function NoteCard({ note }: { note: BlogNote }) {
     return (
         <article className="rounded-lg bg-[#2a123f] p-5 text-white">
-            <Link
-                href={`/blog/${note.slug.join("/")}`}
-                className={`font-semibold hover:underline ${containsArabic(note.title) ? "text-[1.3125rem]" : "text-xl"}`}
-                {...arabicTextProps(note.title)}
-            >
-                {note.title}
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+                <Link
+                    href={`/blog/${note.slug.join("/")}`}
+                    className={`font-semibold hover:underline ${containsArabic(note.title) ? "text-[1.3125rem]" : "text-xl"}`}
+                    {...arabicTextProps(note.title)}
+                >
+                    {note.title}
+                </Link>
+
+                <TagList tags={note.tags} />
+            </div>
 
             {note.description && (
                 <p
@@ -115,8 +119,6 @@ function NoteCard({ note }: { note: BlogNote }) {
                     {note.description}
                 </p>
             )}
-
-            <TagList tags={note.tags} />
         </article>
     );
 }
@@ -127,7 +129,7 @@ function TagList({ tags }: { tags: string[] }) {
     }
 
     return (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
                 <span
                     key={tag}
