@@ -1,7 +1,10 @@
-export default function Index() {
+import ContactForm from "@/components/ContactForm";
+
+export default function ContactPage() {
     return (
         <main className="w-full max-w-3xl px-6 pb-12 pt-[20vh]">
-            <p className="italic">To be implemented.</p>
+            <h1 className="text-4xl font-bold">Contact Me</h1>
+            <ContactForm />
         </main>
     );
 }
