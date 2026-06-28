@@ -48,8 +48,11 @@ function NoteHeader({ note }: { note: ParsedNote }) {
             </h1>
 
             {note.date && (
-                <time className="mt-4 block text-sm opacity-70">
-                    {note.date}
+                <time
+                    className="mt-4 block text-sm opacity-70"
+                    dateTime={note.date}
+                >
+                    Last Modified: {note.date}
                 </time>
             )}
         </header>

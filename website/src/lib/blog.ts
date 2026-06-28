@@ -40,6 +40,96 @@ async function getTrackedMarkdownFiles(): Promise<string[]> {
     );
 }
 
+async function getTrackedMarkdownFileLastModified(
+    mdFileRelativePath: string,
+): Promise<string> {
+    const vaultPath = getVaultPath();
+
+    if (!mdFileRelativePath?.trim()) {
+        throw new Error("Markdown file path cannot be empty.");
+    }
+
+    const normalizedPath = mdFileRelativePath
+        .trim()
+        .replaceAll("\\", "/");
+
+    if (path.posix.isAbsolute(normalizedPath)) {
+        throw new Error("Markdown file path must be relative to the vault.");
+    }
+
+    if (
+        normalizedPath === ".." ||
+        normalizedPath.startsWith("../") ||
+        normalizedPath.includes("/../")
+    ) {
+        throw new Error("Markdown file path cannot leave the vault.");
+    }
+
+    if (path.posix.extname(normalizedPath).toLowerCase() !== ".md") {
+        throw new Error(`File is not a Markdown file: ${normalizedPath}`);
+    }
+
+    const { stdout: trackedOutput } = await execFileAsync(
+        "git",
+        ["ls-files", "--error-unmatch", "--", normalizedPath],
+        {
+            cwd: vaultPath,
+            maxBuffer: 1024 * 1024,
+        },
+    ).catch(() => {
+        throw new Error(
+            `Markdown file is not tracked by Git: ${normalizedPath}`,
+        );
+    });
+
+    if (!trackedOutput.trim()) {
+        throw new Error(
+            `Markdown file is not tracked by Git: ${normalizedPath}`,
+        );
+    }
+
+    const { stdout: dateOutput } = await execFileAsync(
+        "git",
+        [
+            "log",
+            "--follow",
+            "-1",
+            "--format=%cI",
+            "--",
+            normalizedPath,
+        ],
+        {
+            cwd: vaultPath,
+            maxBuffer: 1024 * 1024,
+        },
+    ).catch((error: unknown) => {
+        const message =
+            error instanceof Error ? error.message : String(error);
+
+        throw new Error(
+            `Failed to read Git history for "${normalizedPath}": ${message}`,
+        );
+    });
+
+    const lastModified = dateOutput.trim();
+
+    if (!lastModified) {
+        throw new Error(
+            `No Git commit history found for: ${normalizedPath}`,
+        );
+    }
+
+    const parsedDate = new Date(lastModified);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+        throw new Error(
+            `Git returned an invalid date for "${normalizedPath}": ${lastModified}`,
+        );
+    }
+
+    return lastModified;
+}
+
 type ContentTreeNode = {
     folders: Map<string, ContentTreeNode>;
     notes: string[];
@@ -204,16 +294,6 @@ function parseOptionalString(value: unknown): string | undefined {
     return typeof value === "string" ? value : undefined;
 }
 
-function parseOptionalDate(value: unknown): string | undefined {
-    if (typeof value === "string")
-        return value;
-
-    if (value instanceof Date)
-        return value.toISOString().slice(0, 10);
-
-    return undefined;
-}
-
 function parseTags(value: unknown): string[] {
     if (!Array.isArray(value))
         return [];
@@ -265,7 +345,7 @@ async function parseNoteMetadata(
         slug,
         title: fallbackName,
         description: parseOptionalString(parsed.data.description),
-        date: parseOptionalDate(parsed.data.date),
+        date: await getTrackedMarkdownFileLastModified(relativePath),
         tags: parseTags(parsed.data.tags),
     };
 }
@@ -336,7 +416,9 @@ export async function getNote( slug: string[], ): Promise<ParsedNote | null> {
         slug,
         title: fallbackName,
         description: parseOptionalString(parsed.data.description),
-        date: parseOptionalDate(parsed.data.date),
+        date: await getTrackedMarkdownFileLastModified(
+            resolvedNote.relativePath,
+        ),
         tags: parseTags(parsed.data.tags),
         background: parseCssClassProperty(parsed.data.cssclasses, "background"),
         foreground: parseCssClassProperty(parsed.data.cssclasses, "foreground"),
