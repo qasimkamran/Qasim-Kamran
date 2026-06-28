@@ -1,6 +1,7 @@
 import { type CSSProperties } from "react";
 
 import { type ParsedNote } from "@/lib/blog";
+import { arabicTextProps, containsArabic } from "@/lib/arabic";
 
 import Breadcrumbs from "./Breadcrumbs";
 import MarkdownContent from "./MarkdownContent";
@@ -39,7 +40,12 @@ function getNoteStyles(note: ParsedNote): CSSProperties {
 function NoteHeader({ note }: { note: ParsedNote }) {
     return (
         <header className="mb-10">
-            <h1 className="text-4xl font-bold">{note.title}</h1>
+            <h1
+                className={`font-bold ${containsArabic(note.title) ? "text-[2.3625rem]" : "text-4xl"}`}
+                {...arabicTextProps(note.title)}
+            >
+                {note.title}
+            </h1>
 
             {note.date && (
                 <time className="mt-4 block text-sm opacity-70">

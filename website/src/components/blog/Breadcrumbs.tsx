@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { arabicClassName, arabicTextProps } from "@/lib/arabic";
+
 export default function Breadcrumbs({ slug }: { slug: string[] }) {
     return (
         <nav
@@ -19,7 +21,8 @@ export default function Breadcrumbs({ slug }: { slug: string[] }) {
 
                         <Link
                             href={`/blog/${target}`}
-                            className="capitalize hover:underline"
+                            className={`capitalize hover:underline ${arabicClassName(segment, "text-[0.91875rem]")}`}
+                            {...arabicTextProps(segment)}
                         >
                             {segment.replaceAll("-", " ")}
                         </Link>

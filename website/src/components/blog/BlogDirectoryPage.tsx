@@ -5,6 +5,11 @@ import {
     type BlogNote,
     type DirectoryContents,
 } from "@/lib/blog";
+import {
+    arabicClassName,
+    arabicTextProps,
+    containsArabic,
+} from "@/lib/arabic";
 
 import Breadcrumbs from "./Breadcrumbs";
 
@@ -24,7 +29,10 @@ export default function BlogDirectoryPage({
         <main className="w-full max-w-4xl px-6 py-12">
             <Breadcrumbs slug={slug} />
 
-            <h1 className="mb-8 text-4xl font-bold capitalize">
+            <h1
+                className={`mb-8 font-bold capitalize ${containsArabic(currentName) ? "text-[2.3625rem]" : "text-4xl"}`}
+                {...arabicTextProps(currentName)}
+            >
                 {currentName.replaceAll("-", " ")}
             </h1>
 
@@ -62,7 +70,8 @@ function FolderLink({ folder }: { folder: BlogDirectory }) {
     return (
         <Link
             href={`/blog/${folder.slug.join("/")}`}
-            className="block rounded-lg bg-[#2a123f] p-4 text-white transition-colors hover:bg-[#3a1a57]"
+            className={`block rounded-lg bg-[#2a123f] p-4 text-white transition-colors hover:bg-[#3a1a57] ${arabicClassName(folder.name, "text-[1.05rem]")}`}
+            {...arabicTextProps(folder.name)}
         >
             {folder.name}
         </Link>
@@ -92,13 +101,17 @@ function NoteCard({ note }: { note: BlogNote }) {
         <article className="rounded-lg bg-[#2a123f] p-5 text-white">
             <Link
                 href={`/blog/${note.slug.join("/")}`}
-                className="text-xl font-semibold hover:underline"
+                className={`font-semibold hover:underline ${containsArabic(note.title) ? "text-[1.3125rem]" : "text-xl"}`}
+                {...arabicTextProps(note.title)}
             >
                 {note.title}
             </Link>
 
             {note.description && (
-                <p className="mt-2 text-purple-100">
+                <p
+                    className={`mt-2 text-purple-100 ${arabicClassName(note.description, "text-[1.05rem]")}`}
+                    {...arabicTextProps(note.description)}
+                >
                     {note.description}
                 </p>
             )}
@@ -118,7 +131,8 @@ function TagList({ tags }: { tags: string[] }) {
             {tags.map((tag) => (
                 <span
                     key={tag}
-                    className="rounded-full bg-[#3a1a57] px-2 py-1 text-xs text-white"
+                    className={`rounded-full bg-[#3a1a57] px-2 py-1 text-white ${containsArabic(tag) ? "text-[0.7875rem]" : "text-xs"}`}
+                    {...arabicTextProps(tag)}
                 >
                     {tag}
                 </span>

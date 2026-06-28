@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
+import { Noto_Kufi_Arabic } from "next/font/google";
 import HorizontalNavbar from "@/components/HorizontalNavbar";
 import VerticalNavbar from "@/components/VerticalNavbar";
 import "./globals.css";
+
+const notoKufiArabic = Noto_Kufi_Arabic({
+    subsets: ["arabic"],
+    variable: "--font-arabic",
+    display: "swap",
+});
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -14,7 +21,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className="h-full antialiased">
+        <html
+            lang="en"
+            className={`${notoKufiArabic.variable} h-full antialiased`}
+        >
             <body className="min-h-full">
                 <div className="flex min-h-screen flex-col md:flex-row">
                     <div className="bg-[#080808] md:hidden">

@@ -1,3 +1,8 @@
+import {
+    arabicClassName,
+    arabicTextProps,
+} from "@/lib/arabic";
+
 import navbarData from "./VerticalNavbar-Data.json";
 
 const styles = {
@@ -12,12 +17,21 @@ function HorizontalNavbar() {
     return (
         <nav className={styles.nav}>
             <div className={styles.inner}>
-                <div className={styles.title}>{navbarData.title}</div>
+                <div
+                    className={`${styles.title} ${arabicClassName(navbarData.title, "text-[1.575rem]")}`}
+                    {...arabicTextProps(navbarData.title)}
+                >
+                    {navbarData.title}
+                </div>
                 <ul className={styles.list}>
                     {
                         navbarData.links.map((link) => (
                             <li key={link.path}>
-                                <a className={styles.link} href={link.path}>
+                                <a
+                                    className={`${styles.link} ${arabicClassName(link.label, "text-[1.18125rem]")}`}
+                                    href={link.path}
+                                    {...arabicTextProps(link.label)}
+                                >
                                     {link.label}
                                 </a>
                             </li>

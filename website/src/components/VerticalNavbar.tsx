@@ -1,4 +1,9 @@
-import navbarData from "./VerticalNavbar-Data.json"
+import {
+    arabicClassName,
+    arabicTextProps,
+} from "@/lib/arabic";
+
+import navbarData from "./VerticalNavbar-Data.json";
 
 const styles = {
     nav: "flex min-h-screen w-full flex-col items-end gap-8 py-8 pl-6 pr-[12%] text-white",
@@ -10,12 +15,21 @@ const styles = {
 function VerticalNavbar() {
     return (
         <nav className={styles.nav}>
-            <div className={styles.title}>{navbarData.title}</div>
+            <div
+                className={`${styles.title} ${arabicClassName(navbarData.title, "text-[1.575rem]")}`}
+                {...arabicTextProps(navbarData.title)}
+            >
+                {navbarData.title}
+            </div>
             <ul className={styles.list}>
                 {
                     navbarData.links.map((link) => (
                         <li key={link.path}>
-                            <a className={styles.link} href={link.path}>
+                            <a
+                                className={`${styles.link} ${arabicClassName(link.label, "text-[1.18125rem]")}`}
+                                href={link.path}
+                                {...arabicTextProps(link.label)}
+                            >
                                 {link.label}
                             </a>
                         </li>
