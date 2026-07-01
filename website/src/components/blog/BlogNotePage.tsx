@@ -5,6 +5,7 @@ import { arabicTextProps, containsArabic } from "@/lib/arabic";
 
 import Breadcrumbs from "./Breadcrumbs";
 import MarkdownContent from "./MarkdownContent";
+import SiteBackgroundSync from "./SiteBackgroundSync";
 
 export default function BlogNotePage({
     note,
@@ -15,9 +16,10 @@ export default function BlogNotePage({
 }) {
     return (
         <main
-            className="-mx-4 min-h-screen px-10 py-12 md:-ml-[10vw] md:mr-0 md:pl-[calc(10vw+1.5rem)] md:pr-6"
+            className="-mx-4 min-h-screen px-10 py-12 md:-ml-[5vw] md:mr-0 md:pl-[calc(5vw+1.5rem)] md:pr-6"
             style={getNoteStyles(note)}
         >
+            <SiteBackgroundSync background={note.background} />
             <div className="w-full max-w-3xl">
                 <Breadcrumbs slug={parentSlug} />
 
