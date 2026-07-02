@@ -4,8 +4,8 @@ import { type ParsedNote } from "@/lib/blog";
 import { arabicTextProps, containsArabic } from "@/lib/arabic";
 
 import Breadcrumbs from "./Breadcrumbs";
-import MarkdownContent from "./MarkdownContent";
-import SiteBackgroundSync from "./SiteBackgroundSync";
+import MarkdownContent from "../MarkdownContent";
+import SiteBackgroundSync from "../SiteBackgroundSync";
 
 export default function BlogNotePage({
     note,

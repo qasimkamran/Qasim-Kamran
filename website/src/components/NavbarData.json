@@ -6,6 +6,10 @@
             "path": "/index"
         },
         {
+            "label": "Work Experience",
+            "path": "/exp"
+        },
+        {
             "label": "Blog",
             "path": "/blog"
         },

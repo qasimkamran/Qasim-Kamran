@@ -1,10 +1,17 @@
 import { isValidElement, type ReactNode } from "react";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { containsArabic } from "@/lib/arabic";
 
-export default function MarkdownContent({ content }: { content: string }) {
+export default function MarkdownContent({
+    content,
+    tableImageBasePath,
+}: {
+    content: string;
+    tableImageBasePath?: string;
+}) {
     return (
         <div className="prose prose-neutral max-w-none text-current dark:prose-invert">
             <ReactMarkdown
@@ -17,8 +24,29 @@ export default function MarkdownContent({ content }: { content: string }) {
                     p: MarkdownParagraph,
                     li: MarkdownListItem,
                     blockquote: MarkdownBlockquote,
-                    th: MarkdownTableHeader,
-                    td: MarkdownTableCell,
+                    table: ({ children }) => (
+                        <table className={tableImageBasePath
+                            ? "!my-3 !w-auto !border-separate !border-spacing-0 !border-0"
+                            : undefined}
+                        >
+                            {children}
+                        </table>
+                    ),
+                    tr: ({ children }) => (
+                        <tr className={tableImageBasePath ? "!border-0" : undefined}>
+                            {children}
+                        </tr>
+                    ),
+                    th: ({ children }) => (
+                        <MarkdownTableHeader imageBasePath={tableImageBasePath}>
+                            {children}
+                        </MarkdownTableHeader>
+                    ),
+                    td: ({ children }) => (
+                        <MarkdownTableCell imageBasePath={tableImageBasePath}>
+                            {children}
+                        </MarkdownTableCell>
+                    ),
                 }}
             >
                 {content}
@@ -117,7 +145,26 @@ function MarkdownBlockquote({ children }: { children?: ReactNode }) {
     );
 }
 
-function MarkdownTableHeader({ children }: { children?: ReactNode }) {
+function MarkdownTableHeader({
+    children,
+    imageBasePath,
+}: {
+    children?: ReactNode;
+    imageBasePath?: string;
+}) {
+    const imageFilename = getTableImageFilename(children);
+
+    if (imageFilename && imageBasePath) {
+        return (
+            <th className="!border-0 !p-4">
+                <MarkdownTableImage
+                    filename={imageFilename}
+                    basePath={imageBasePath}
+                />
+            </th>
+        );
+    }
+
     return (
         <th
             className={directionalClassName(children, "text-right text-[1.05rem]")}
@@ -129,7 +176,26 @@ function MarkdownTableHeader({ children }: { children?: ReactNode }) {
     );
 }
 
-function MarkdownTableCell({ children }: { children?: ReactNode }) {
+function MarkdownTableCell({
+    children,
+    imageBasePath,
+}: {
+    children?: ReactNode;
+    imageBasePath?: string;
+}) {
+    const imageFilename = getTableImageFilename(children);
+
+    if (imageFilename && imageBasePath) {
+        return (
+            <td className="!border-0 !p-4">
+                <MarkdownTableImage
+                    filename={imageFilename}
+                    basePath={imageBasePath}
+                />
+            </td>
+        );
+    }
+
     return (
         <td
             className={directionalClassName(children, "text-right text-[1.05rem]")}
@@ -138,6 +204,36 @@ function MarkdownTableCell({ children }: { children?: ReactNode }) {
         >
             {children}
         </td>
+    );
+}
+
+function getTableImageFilename(children: ReactNode): string | undefined {
+    if (typeof children !== "string") {
+        return undefined;
+    }
+
+    const filename = children.trim();
+
+    return /^[^/\\]+\.(?:png|jpe?g|gif|webp|svg)$/i.test(filename)
+        ? filename
+        : undefined;
+}
+
+function MarkdownTableImage({
+    filename,
+    basePath,
+}: {
+    filename: string;
+    basePath: string;
+}) {
+    return (
+        <Image
+            src={`${basePath}/${encodeURIComponent(filename)}`}
+            alt={filename.replace(/\.[^.]+$/, "")}
+            width={48}
+            height={48}
+            className="m-0 h-12 w-12 object-contain"
+        />
     );
 }
 

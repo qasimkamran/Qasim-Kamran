@@ -3,7 +3,7 @@ import {
     arabicTextProps,
 } from "@/lib/arabic";
 
-import navbarData from "./VerticalNavbar-Data.json";
+import navbarData from "./NavbarData.json";
 
 const styles = {
     nav: "flex min-h-screen w-full flex-col items-end gap-8 pb-8 pl-6 pr-[12%] pt-12 text-white",

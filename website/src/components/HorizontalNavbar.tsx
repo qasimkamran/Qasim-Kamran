@@ -3,7 +3,7 @@ import {
     arabicTextProps,
 } from "@/lib/arabic";
 
-import navbarData from "./VerticalNavbar-Data.json";
+import navbarData from "./NavbarData.json";
 
 const styles = {
     nav: "px-4 py-4 text-white",
