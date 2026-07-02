@@ -3,6 +3,8 @@ import path from "node:path";
 
 import matter from "gray-matter";
 
+import { parseCssClassProperty } from "@/lib/cssClasses";
+
 const MONTH_YEAR_PATTERN = /^(0[1-9]|1[0-2])\/(\d{4})$/;
 
 export type ExperienceRole = {
@@ -12,6 +14,7 @@ export type ExperienceRole = {
 
 export type WorkExperience = {
     employer: string;
+    titleColor?: string;
     roles: ExperienceRole[];
     content: string;
 };
@@ -53,7 +56,8 @@ function parseDates(value: unknown): string[] {
 }
 
 function toRoles(properties: Record<string, unknown>): ExperienceRole[] {
-    const entries = Object.entries(properties);
+    const entries = Object.entries(properties)
+        .filter(([, value]) => parseDates(value).length > 0);
 
     return entries.map(([title, value], index) => {
         const dates = parseDates(value);
@@ -89,6 +93,10 @@ export async function getWorkExperiences(): Promise<WorkExperience[]> {
 
         return {
             employer: entry.name.replace(/\.md$/i, ""),
+            titleColor: parseCssClassProperty(
+                note.data.cssclasses,
+                "title",
+            ),
             roles: toRoles(note.data),
             content: note.content,
         };

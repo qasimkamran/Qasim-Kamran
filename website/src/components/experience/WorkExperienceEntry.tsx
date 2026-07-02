@@ -11,9 +11,12 @@ export default function WorkExperienceEntry({
 }) {
     return (
         <article>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-neutral-400">
+            <h2
+                className="mb-5 font-sans text-3xl font-normal uppercase"
+                style={{ color: experience.titleColor }}
+            >
                 {experience.employer}
-            </p>
+            </h2>
 
             <div className="mb-7 space-y-4">
                 {experience.roles.map((role, index) => (
@@ -40,7 +43,7 @@ function RoleHeading({
     role: ExperienceRole;
     primary: boolean;
 }) {
-    const Heading = primary ? "h2" : "h3";
+    const Heading = primary ? "h3" : "h4";
 
     return (
         <Heading
