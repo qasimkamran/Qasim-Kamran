@@ -21,7 +21,9 @@ export default async function BlogPage({ params }: BlogPageProps) {
         return <BlogDirectoryPage directory={directory} slug={slug} />;
     }
 
-    const note = await getNote(slug);
+    const note = await getNote(slug, {
+        includeUnpublished: slug[0] === "projects",
+    });
 
     if (!note) {
         notFound();

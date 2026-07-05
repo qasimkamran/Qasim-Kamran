@@ -331,6 +331,36 @@ async function parseNoteMetadata(
     };
 }
 
+async function directoryHasPublishedNotes(
+    node: ContentTreeNode,
+    realSegments: string[],
+): Promise<boolean> {
+    for (const filename of node.notes) {
+        const absolutePath = path.join(
+            getVaultPath(),
+            ...realSegments,
+            filename,
+        );
+        const source = await fs.readFile(absolutePath, "utf8");
+
+        if (matter(source).data.published !== false)
+            return true;
+    }
+
+    for (const [folderName, folderNode] of node.folders) {
+        if (
+            await directoryHasPublishedNotes(
+                folderNode,
+                [...realSegments, folderName],
+            )
+        ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 export async function getDirectoryContents(
     slug: string[],
 ): Promise<DirectoryContents | null> {
@@ -341,14 +371,28 @@ export async function getDirectoryContents(
     if (!resolvedDirectory)
         return null;
     
-    const directories: BlogDirectory[] =
-        Array.from( resolvedDirectory.node.folders.keys(), )
-            .map((folderName) => ({
-                type: "directory" as const,
-                name: folderName,
-                slug: [...slug, toSlugSegment(folderName)],
-            }))
-            .sort((a, b) => a.name.localeCompare(b.name));
+    const directories = (
+        await Promise.all(
+            Array.from(resolvedDirectory.node.folders.entries())
+                .map(async ([folderName, folderNode]) => {
+                    const hasPublishedNotes = await directoryHasPublishedNotes(
+                        folderNode,
+                        [...resolvedDirectory.realSegments, folderName],
+                    );
+
+                    if (!hasPublishedNotes)
+                        return null;
+
+                    return {
+                        type: "directory" as const,
+                        name: folderName,
+                        slug: [...slug, toSlugSegment(folderName)],
+                    };
+                }),
+        )
+    )
+        .filter((directory): directory is BlogDirectory => directory !== null)
+        .sort((a, b) => a.name.localeCompare(b.name));
         
         const notes: BlogNote[] = [];
 
@@ -373,7 +417,10 @@ export async function getDirectoryContents(
         };
 }
 
-export async function getNote( slug: string[], ): Promise<ParsedNote | null> {
+export async function getNote(
+    slug: string[],
+    options: { includeUnpublished?: boolean } = {},
+): Promise<ParsedNote | null> {
     const tree = await buildTrackedContentTree();
     const resolvedNote = resolveNoteFromTree(tree, slug);
     
@@ -388,7 +435,7 @@ export async function getNote( slug: string[], ): Promise<ParsedNote | null> {
     
     const fallbackName = removeMarkdownExtension( resolvedNote.filename, );
     
-    if (parsed.data.published === false)
+    if (parsed.data.published === false && !options.includeUnpublished)
         return null;
     
     return {
