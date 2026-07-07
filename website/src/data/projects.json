@@ -2,5 +2,13 @@
     {
         "title": "Sigminer",
         "stack": ["C", "C++", "Bash"]
+    },
+    {
+        "title": "OCR-App",
+        "stack": ["C++"]
+    },
+    {
+        "title": "AC-HardBrakeDetect",
+        "stack": ["Lua"]
     }
 ]

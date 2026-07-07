@@ -1,4 +1,5 @@
-import { isValidElement, type ReactNode } from "react";
+/* eslint-disable @next/next/no-img-element */
+import { isValidElement, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -24,6 +25,7 @@ export default function MarkdownContent({
                     p: MarkdownParagraph,
                     li: MarkdownListItem,
                     blockquote: MarkdownBlockquote,
+                    img: MarkdownMedia,
                     table: ({ children }) => (
                         <table className={tableImageBasePath
                             ? "!my-3 !w-auto !border-separate !border-spacing-0 !border-0"
@@ -145,6 +147,29 @@ function MarkdownBlockquote({ children }: { children?: ReactNode }) {
     );
 }
 
+function MarkdownMedia({
+    src,
+    alt,
+    ...props
+}: ComponentPropsWithoutRef<"img">) {
+    if (src && isVideoSource(src)) {
+        return (
+            <video
+                controls
+                preload="metadata"
+                aria-label={alt || undefined}
+                className="my-6 w-full rounded-md"
+            >
+                <source src={src} type={videoContentType(src)} />
+                {alt ? `${alt}: ` : null}
+                <a href={src}>{src}</a>
+            </video>
+        );
+    }
+
+    return <img src={src} alt={alt ?? ""} {...props} />;
+}
+
 function MarkdownTableHeader({
     children,
     imageBasePath,
@@ -205,6 +230,44 @@ function MarkdownTableCell({
             {children}
         </td>
     );
+}
+
+const videoContentTypes: Record<string, string> = {
+    mov: "video/quicktime",
+    mp4: "video/mp4",
+    ogg: "video/ogg",
+    ogv: "video/ogg",
+    webm: "video/webm",
+};
+
+function isVideoSource(src: string): boolean {
+    const extension = getSourceExtension(src);
+
+    return extension ? extension in videoContentTypes : false;
+}
+
+function videoContentType(src: string): string | undefined {
+    const extension = getSourceExtension(src);
+
+    return extension ? videoContentTypes[extension] : undefined;
+}
+
+function getSourceExtension(src: string): string | undefined {
+    const sourcePath = getSourcePath(src);
+    const match = /\.([a-z0-9]+)$/i.exec(sourcePath);
+
+    return match?.[1].toLowerCase();
+}
+
+function getSourcePath(src: string): string {
+    try {
+        const url = new URL(src, "http://localhost");
+        const assetPath = url.searchParams.get("path");
+
+        return assetPath ?? url.pathname;
+    } catch {
+        return src.split(/[?#]/, 1)[0];
+    }
 }
 
 function getTableImageFilename(children: ReactNode): string | undefined {
