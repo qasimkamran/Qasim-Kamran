@@ -4,11 +4,11 @@
         "stack": ["C", "C++", "Bash"]
     },
     {
-        "title": "OCR-App",
+        "title": "Optical Character Recognition (OCR) App",
         "stack": ["C++"]
     },
     {
-        "title": "AC-HardBrakeDetect",
+        "title": "Hard Brake Detection Widget",
         "stack": ["Lua"]
     }
 ]

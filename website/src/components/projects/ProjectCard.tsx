@@ -43,29 +43,73 @@ export default function ProjectCard({ project }: { project: Project }) {
                     {project.description ?? "No description provided."}
                 </p>
 
-                {project.tags.length > 0 && (
-                    <ul className="mt-4 flex flex-wrap gap-2" aria-label="Project tags">
-                        {project.tags.map((tag) => (
-                            <li
-                                key={tag}
-                                className="rounded-full border border-purple-300/20 bg-purple-300/10 px-3 py-1 text-xs text-purple-100"
-                            >{tag}</li>
-                        ))}
-                    </ul>
+                {(project.tags.length > 0 || project.demoHref || project.githubHref) && (
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                        {project.tags.length > 0 && (
+                            <ul
+                                className="flex min-w-0 flex-1 flex-wrap gap-2"
+                                aria-label="Project tags"
+                            >
+                                {project.tags.map((tag) => (
+                                    <li
+                                        key={tag}
+                                        className="rounded-full border border-purple-300/20 bg-purple-300/10 px-3 py-1 text-xs text-purple-100"
+                                    >{tag}</li>
+                                ))}
+                            </ul>
+                        )}
+
+                        {(project.demoHref || project.githubHref) && (
+                            <div className="ml-auto flex shrink-0 items-center gap-2">
+                                {project.demoHref && (
+                                    <Link
+                                        href={project.demoHref}
+                                        className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white no-underline transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+                                    >
+                                        Demo
+                                    </Link>
+                                )}
+
+                                {project.githubHref && (
+                                    <a
+                                        href={project.githubHref}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white no-underline transition hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-300"
+                                    >
+                                        GitHub
+                                    </a>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
 
-            {project.images.length > 0 && (
+            {project.media.length > 0 && (
                 <div className="grid gap-1 border-t border-white/10">
-                    {project.images.map((image) => (
-                        // The image source can be a Blog asset or an external Markdown URL.
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            key={image.src}
-                            src={image.src}
-                            alt={image.alt}
-                            className="h-auto max-h-96 w-full object-cover"
-                        />
+                    {project.media.map((media) => (
+                        media.type === "video" ? (
+                            <video
+                                key={media.src}
+                                muted
+                                playsInline
+                                preload="metadata"
+                                aria-label={media.alt}
+                                className="aspect-video max-h-96 w-full object-cover"
+                            >
+                                <source src={media.src} />
+                            </video>
+                        ) : (
+                            // The image source can be a Blog asset or an external Markdown URL.
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                key={media.src}
+                                src={media.src}
+                                alt={media.alt}
+                                className="h-auto max-h-96 w-full object-cover"
+                            />
+                        )
                     ))}
                 </div>
             )}

@@ -64,12 +64,12 @@ export default function CompanyCard({
                 </section>
             </div>
 
-            <section className="mt-8 border-t border-white/10 pt-8">
-                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-purple-200">
-                    Competencies
-                </h3>
+            {competency.notes.length > 0 && (
+                <section className="mt-8 border-t border-white/10 pt-8">
+                    <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-purple-200">
+                        Competencies
+                    </h3>
 
-                {competency.notes.length > 0 ? (
                     <div className="grid gap-3 sm:grid-cols-2">
                         {competency.notes.map((note) => (
                             <Link
@@ -81,12 +81,8 @@ export default function CompanyCard({
                             </Link>
                         ))}
                     </div>
-                ) : (
-                    <p className="text-sm text-neutral-400">
-                        No competency notes published yet.
-                    </p>
-                )}
-            </section>
+                </section>
+            )}
         </article>
     );
 }

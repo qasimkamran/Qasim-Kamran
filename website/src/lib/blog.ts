@@ -186,6 +186,7 @@ export type BlogNote = {
     slug: string[];
     title: string;
     description?: string;
+    github?: string;
     date?: string;
     tags: string[];
 };
@@ -326,6 +327,7 @@ async function parseNoteMetadata(
         slug,
         title: fallbackName,
         description: parseOptionalString(parsed.data.description),
+        github: parseOptionalString(parsed.data.github),
         date: await getTrackedMarkdownFileLastModified(relativePath),
         tags: parseTags(parsed.data.tags),
     };
@@ -444,6 +446,7 @@ export async function getNote(
         slug,
         title: fallbackName,
         description: parseOptionalString(parsed.data.description),
+        github: parseOptionalString(parsed.data.github),
         date: await getTrackedMarkdownFileLastModified(
             resolvedNote.relativePath,
         ),

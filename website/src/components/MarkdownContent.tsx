@@ -60,7 +60,8 @@ export default function MarkdownContent({
 function MarkdownHeading1({ children }: { children?: ReactNode }) {
     return (
         <h1
-            className={`mb-6 mt-10 font-bold first:mt-0 ${directionalClassName(children, "text-right text-[2.3625rem]", "text-4xl")}`}
+            id={headingId(children)}
+            className={`mb-6 mt-10 scroll-mt-8 font-bold first:mt-0 ${directionalClassName(children, "text-right text-[2.3625rem]", "text-4xl")}`}
             dir={textDirection(children)}
             lang={textLanguage(children)}
         >
@@ -72,7 +73,8 @@ function MarkdownHeading1({ children }: { children?: ReactNode }) {
 function MarkdownHeading2({ children }: { children?: ReactNode }) {
     return (
         <h2
-            className={`mb-4 mt-8 font-semibold first:mt-0 ${directionalClassName(children, "text-right text-[1.96875rem]", "text-3xl")}`}
+            id={headingId(children)}
+            className={`mb-4 mt-8 scroll-mt-8 font-semibold first:mt-0 ${directionalClassName(children, "text-right text-[1.96875rem]", "text-3xl")}`}
             dir={textDirection(children)}
             lang={textLanguage(children)}
         >
@@ -84,7 +86,8 @@ function MarkdownHeading2({ children }: { children?: ReactNode }) {
 function MarkdownHeading3({ children }: { children?: ReactNode }) {
     return (
         <h3
-            className={`mb-3 mt-6 font-semibold first:mt-0 ${directionalClassName(children, "text-right text-[1.575rem]", "text-2xl")}`}
+            id={headingId(children)}
+            className={`mb-3 mt-6 scroll-mt-8 font-semibold first:mt-0 ${directionalClassName(children, "text-right text-[1.575rem]", "text-2xl")}`}
             dir={textDirection(children)}
             lang={textLanguage(children)}
         >
@@ -96,7 +99,8 @@ function MarkdownHeading3({ children }: { children?: ReactNode }) {
 function MarkdownHeading4({ children }: { children?: ReactNode }) {
     return (
         <h4
-            className={`mb-2 mt-5 font-semibold first:mt-0 ${directionalClassName(children, "text-right text-[1.3125rem]", "text-xl")}`}
+            id={headingId(children)}
+            className={`mb-2 mt-5 scroll-mt-8 font-semibold first:mt-0 ${directionalClassName(children, "text-right text-[1.3125rem]", "text-xl")}`}
             dir={textDirection(children)}
             lang={textLanguage(children)}
         >
@@ -152,7 +156,9 @@ function MarkdownMedia({
     alt,
     ...props
 }: ComponentPropsWithoutRef<"img">) {
-    if (src && isVideoSource(src)) {
+    const mediaSrc = typeof src === "string" ? src : undefined;
+
+    if (mediaSrc && isVideoSource(mediaSrc)) {
         return (
             <video
                 controls
@@ -160,9 +166,9 @@ function MarkdownMedia({
                 aria-label={alt || undefined}
                 className="my-6 w-full rounded-md"
             >
-                <source src={src} type={videoContentType(src)} />
+                <source src={mediaSrc} type={videoContentType(mediaSrc)} />
                 {alt ? `${alt}: ` : null}
-                <a href={src}>{src}</a>
+                <a href={mediaSrc}>{mediaSrc}</a>
             </video>
         );
     }
@@ -314,6 +320,37 @@ function containsArabicText(value: ReactNode): boolean {
     }
 
     return false;
+}
+
+function headingId(value: ReactNode): string | undefined {
+    const text = nodeText(value);
+
+    if (!text)
+        return undefined;
+
+    return text
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
+function nodeText(value: ReactNode): string {
+    if (typeof value === "string" || typeof value === "number") {
+        return String(value);
+    }
+
+    if (Array.isArray(value)) {
+        return value.map(nodeText).join("");
+    }
+
+    if (isValidElement<{ children?: ReactNode }>(value)) {
+        return nodeText(value.props.children);
+    }
+
+    return "";
 }
 
 function textDirection(value: ReactNode) {
