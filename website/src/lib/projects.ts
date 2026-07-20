@@ -1,6 +1,7 @@
 import path from "node:path";
 
-import projectsData from "@/data/projects.json";
+import projectsData from "@/data/projectsData.json";
+import { resolveAssetSource } from "@/lib/assets";
 import { getNote, toSlugSegment } from "@/lib/blog";
 
 export type ProjectMedia = {
@@ -119,6 +120,11 @@ function isProjectMedia(
 }
 
 function resolveMediaSource(source: string, noteDirectory: string): string {
+    const assetSource = resolveAssetSource(source);
+
+    if (assetSource !== source)
+        return assetSource;
+
     if (/^https?:\/\//i.test(source) || source.startsWith("/"))
         return source;
 

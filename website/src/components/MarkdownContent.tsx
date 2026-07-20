@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { containsArabic } from "@/lib/arabic";
+import { resolveAssetSource } from "@/lib/assets";
 
 export default function MarkdownContent({
     content,
@@ -156,7 +157,9 @@ function MarkdownMedia({
     alt,
     ...props
 }: ComponentPropsWithoutRef<"img">) {
-    const mediaSrc = typeof src === "string" ? src : undefined;
+    const mediaSrc = typeof src === "string"
+        ? resolveAssetSource(src)
+        : undefined;
 
     if (mediaSrc && isVideoSource(mediaSrc)) {
         return (
@@ -173,7 +176,7 @@ function MarkdownMedia({
         );
     }
 
-    return <img src={src} alt={alt ?? ""} {...props} />;
+    return <img src={mediaSrc ?? src} alt={alt ?? ""} {...props} />;
 }
 
 function MarkdownTableHeader({
@@ -297,7 +300,7 @@ function MarkdownTableImage({
 }) {
     return (
         <Image
-            src={`${basePath}/${encodeURIComponent(filename)}`}
+            src={resolveAssetSource(`${basePath}/${encodeURIComponent(filename)}`)}
             alt={filename.replace(/\.[^.]+$/, "")}
             width={48}
             height={48}

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { assetUrl } from "@/lib/assets";
+import { toAssetFilenameStem } from "@/lib/assetNames";
 import type { Project } from "@/lib/projects";
 
 export default function ProjectCard({ project }: { project: Project }) {
@@ -28,7 +30,7 @@ export default function ProjectCard({ project }: { project: Project }) {
                                 title={technology}
                             >
                                 <Image
-                                    src={`/assets/icons/${encodeURIComponent(technology)}.png`}
+                                    src={assetUrl(`icons/${toAssetFilenameStem(technology)}.png`)}
                                     alt={`${technology} icon`}
                                     width={40}
                                     height={40}

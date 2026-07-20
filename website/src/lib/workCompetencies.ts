@@ -1,4 +1,4 @@
-import competenciesData from "@/data/workCompetencies.json";
+import competenciesData from "@/data/workCompetenciesData.json";
 import { getDirectoryContents, toSlugSegment, type BlogNote } from "@/lib/blog";
 
 export type Role = {

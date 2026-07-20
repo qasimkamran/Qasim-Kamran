@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { assetUrl } from "@/lib/assets";
+import { toAssetFilenameStem } from "@/lib/assetNames";
 import type { Role, WorkCompetency } from "@/lib/workCompetencies";
 
 export default function CompanyCard({
@@ -43,7 +45,7 @@ export default function CompanyCard({
                                 title={technology}
                             >
                                 <Image
-                                    src={`/assets/icons/${encodeURIComponent(technology)}.png`}
+                                    src={assetUrl(`icons/${toAssetFilenameStem(technology)}.png`)}
                                     alt={`${technology} icon`}
                                     width={40}
                                     height={40}
